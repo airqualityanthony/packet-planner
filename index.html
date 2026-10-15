@@ -1038,7 +1038,7 @@ canvas#profile { width: 100%; height: 200px; background: var(--field); border: 1
       <div id="map" aria-label="Map"></div>
       <div class="mapctl">
         <label for="basemap">Map</label>
-        <select id="basemap"><option value="outline">Outline</option><option value="light">Streets light</option><option value="dark">Streets dark</option><option value="topo">Topographic</option></select>
+        <select id="basemap"><option value="outline">Outline</option><option value="topo">Topographic</option></select>
       </div>
       <div class="pickhint" id="pick-hint" hidden>Click the map to place the node · Esc to cancel</div>
     </div>
@@ -1828,8 +1828,6 @@ function drawCoast() {
 }
 const ATTR_OSM = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 const bases = {
-  light: L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 19, attribution: ATTR_OSM + ' &copy; <a href="https://carto.com/attributions">CARTO</a>' }),
-  dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 19, attribution: ATTR_OSM + ' &copy; <a href="https://carto.com/attributions">CARTO</a>' }),
   topo: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { subdomains: 'abc', maxZoom: 17, attribution: ATTR_OSM + ', SRTM | &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)' })
 };
 let tilesOK = false;
@@ -1844,10 +1842,9 @@ $('basemap').addEventListener('change', () => { if (!tilesOK && $('basemap').val
   const img = new Image(); let done = false;
   const fin = (ok) => { if (done) return; done = true; tilesOK = ok; const sel = $('basemap');
     for (const o of sel.options) if (o.value !== 'outline') { o.disabled = !ok; if (!ok) o.textContent = o.textContent.replace(/ \(online only\)$/, '') + ' (online only)'; }
-    if (ok) sel.value = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     applyBasemap(); };
   img.onload = () => fin(true); img.onerror = () => fin(false); setTimeout(() => fin(false), 6000);
-  img.src = 'https://a.basemaps.cartocdn.com/light_all/5/15/10.png';
+  img.src = 'https://a.tile.opentopomap.org/5/15/10.png';
 })();
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { drawCoast(); if (S.siteRes) renderSite(); if (S.netRes) renderNet(); });
 
